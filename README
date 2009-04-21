@@ -6,6 +6,10 @@ And description in following:
 
 	description, body, contents
 
+To start use it you must install plugin
+
+	script/plugin install git://github.com/over/to_rss.git
+
 Also you can define own values of these RSS attributes. Check out examples of usage:
 
 	render :rss => Post.all.to_rss(:makeup => Proc.new {|feed, element|
