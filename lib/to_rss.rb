@@ -1,22 +1,23 @@
-class ActionController::Base
-  alias_method :render_without_rss, :render
+class ActionController::Base  
+  alias_method :render_normal, :render
   
   def render(options = nil, extra_options = {}, &block)
     if rss = options[:rss]
       response.content_type ||= Mime::RSS
-      render_for_text(rss.respond_to?(:to_rss) ? rss.to_rss : rss, options[:status])
+      block ? render_for_text(rss[:items].to_rss(rss[:options], &block)) : render_for_text(rss)
     else
-      render_without_rss(options, extra_options, &block)
+      render_normal(options, extra_options, &block)
     end
   end
+  
 end
 
 module ActiveSupport
   module CoreExtensions
     module Array
       module Conversions
-        def to_rss(options={})
-          ::ToRss.build(self, options)
+        def to_rss(options={}, &block)
+          ::ToRss.build(self, options, &block)
         end
       end
     end
@@ -46,7 +47,8 @@ module ToRss
   module InstanceMethods
   end
 
-  def self.build(items, options)
+  
+  def self.generate_rss(items, options, &block)
     content = ::RSS::Maker.make('2.0') do |m|
       m.channel.title = options[:feed_title] || ToRss::Config.feed[:title]
       m.channel.link  =  options[:feed_link] || ToRss::Config.feed[:link]
@@ -54,11 +56,11 @@ module ToRss
       
       items.each do |item|
         feed = Hash.new
-        options[:makeup].call(feed, item)
+        block.call(feed, item)
         
         item_options = {
           :title => feed[:title] || item.title || item.name || item.lead || item.heading,
-          :link => feed[:link],
+          :link => feed[:link] || m.channel.link,
           :description => feed[:description] || item.description || item.body || item.contents,
           :date => feed[:date] || Time.parse(item.created_at.to_s)
           
@@ -72,7 +74,14 @@ module ToRss
         i.guid.content = item_options[:link] + "#" + Digest::MD5.hexdigest("#{item_options[:title]}#{item_options[:description]}")
       end
     end
-    
-    content.to_s
+    return content.to_s
+  end
+
+  def self.build(items, options, &block)
+    if block
+      generate_rss(items, options, &block)
+    else
+      { :items => items, :options => options }
+    end
   end
 end

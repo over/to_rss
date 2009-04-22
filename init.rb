@@ -1,7 +1,7 @@
 # Include hook code here
 require 'active_record'
 require 'action_controller'
-
+require 'action_view'
 require 'rss/2.0'
 require 'rss/maker'
 

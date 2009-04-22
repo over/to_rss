@@ -1,51 +1,46 @@
-This plugin helps you to generate rss feeds. Plugin searches title of feed item in these fields:
-
-	title, name, lead, heading
-
-And description in following:
-
-	description, body, contents
+= to_rss()
 
 To start use it you must install plugin
 
-	script/plugin install git://github.com/over/to_rss.git
+script/plugin install git://github.com/over/to_rss.git
+
+Easiest way to generate RSS:
+
+  @posts = Post.all
+  render :rss => @posts.to_rss {|feed, item| feed[:link] = polymorphic_url(item) }
+
+Plugin searches title of feed item in these fields:
+
+  title, name, lead, heading
+
+And description in following:
+
+  description, body, contents
 
 Also you can define own values of these RSS attributes. Check out examples of usage:
 
-	render :rss => Post.all.to_rss(:makeup => Proc.new {|feed, element|
-		feed[:title] = element.title
-		feed[:description] = element.description
-		feed[:link] = polymorphic_url(element)
-	})
+  render :rss => @posts.to_rss do |feed, item| 
+    feed[:title] = "#{item.title}: #{item.description.first(10)}..."
+    feed[:description] = render_to_string(:partial => "posts/to_rss", :object => item)
+    feed[:link] = polymorphic_url(item)
+  end
 
-This is only one required attribute (feed[:link])
-
-	render :rss => Post.all.to_rss(:makeup => Proc.new {|feed, element|
-		feed[:link] = polymorphic_url(element)
-	})
-
-
-	render :rss => Post.all.to_rss(:makeup => Proc.new {|feed, element|
-		feed[:description] = render_to_string(:partial => "posts/to_rss", :object => element)
-		feed[:link] = polymorphic_url(element)
-	})
-
-
+The only required attribute is feed[:link]
 	
 Also, you can customize feed properties:
 
-	# config/environment.rb
-	ToRss::Config.feed[:title] = "The best channel you have ever seen"
-	ToRss::Config.feed[:link] = "http://tandp.ru"
-	ToRss::Config.feed[:description] = "Feed of posts"
+  # config/environment.rb
+  ToRss::Config.feed[:title] = "The best channel you have ever seen"
+  ToRss::Config.feed[:link] = "http://tandp.ru"
+  ToRss::Config.feed[:description] = "Feed of posts"
 
 
 Also, you can rewrite it in controller:
 
-	render :rss => Post.all.to_rss(:feed_title => "Overwritten title", :feed_link => "http://google.com", :feed_description => "description kung fu!",
-	:makeup => Proc.new {|feed, element|
-		feed[:description] = render_to_string(:partial => "posts/to_rss", :object => element)
-		feed[:link] = polymorphic_url(element)
-	})
+  render :rss => @posts.to_rss(:feed_title => "Overwritten title", :feed_link => "http://google.com", :feed_description => "Zhopa123") do |feed, item| 
+    feed[:title] = "#{item.title}: #{item.description.first(10)}..."
+    feed[:description] = render_to_string(:partial => "posts/to_rss", :object => item)
+    feed[:link] = polymorphic_url(item)
+  end
 
 Copyright (c) 2009 Mikhail Tabunov, released under the MIT license
