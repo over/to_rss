@@ -2,7 +2,7 @@
 
 To start use it you must install plugin
 
-script/plugin install git://github.com/over/to_rss.git
+  script/plugin install git://github.com/over/to_rss.git
 
 Easiest way to generate RSS:
 
@@ -30,9 +30,9 @@ The only required attribute is feed[:link]
 Also, you can customize feed properties:
 
 # config/environment.rb
-ToRss::Config.feed[:title] = "The best channel you have ever seen"
-ToRss::Config.feed[:link] = "http://tandp.ru"
-ToRss::Config.feed[:description] = "Feed of posts"
+  ToRss::Config.feed[:title] = "The best channel you have ever seen"
+  ToRss::Config.feed[:link] = "http://tandp.ru"
+  ToRss::Config.feed[:description] = "Feed of posts"
 
 
 Also, you can rewrite it in controller:
