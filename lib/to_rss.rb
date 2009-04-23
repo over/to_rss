@@ -2,7 +2,7 @@ class ActionController::Base
   alias_method :render_normal, :render
   
   def render(options = nil, extra_options = {}, &block)
-    if rss = options[:rss]
+    if options && rss = options[:rss]
       response.content_type ||= Mime::RSS
       block ? render_for_text(rss[:items].to_rss(rss[:options], &block)) : render_for_text(rss)
     else
