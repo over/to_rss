@@ -2,7 +2,7 @@ class ActionController::Base
   alias_method :render_normal, :render
   
   def render(options = nil, extra_options = {}, &block)
-    if options && rss = options[:rss]
+    if options && options.is_a?(Hash) && rss = options[:rss]
       response.content_type ||= Mime::RSS
       block ? render_for_text(rss[:items].to_rss(rss[:options], &block)) : render_for_text(rss)
     else
@@ -57,10 +57,10 @@ module ToRss
       items.each do |item|
         feed = Hash.new
         block.call(feed, item)
-        
+
         item_options = {
           :title => feed[:title] || item.title || item.name || item.lead || item.heading,
-          :link => feed[:link] || m.channel.link,
+          :link => link, # || m.channel.link,
           :description => feed[:description] || item.description || item.body || item.contents,
           :date => feed[:date] || Time.parse(item.created_at.to_s)
           

@@ -8,3 +8,4 @@ require 'rss/maker'
 require File.join(File.dirname(__FILE__), '/lib/to_rss')
 
 ActiveRecord::Base.send(:include, ToRss)
+ActionController::Base.send(:include, ToRss)
