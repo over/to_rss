@@ -60,7 +60,7 @@ module ToRss
 
         item_options = {
           :title => feed[:title] || item.title || item.name || item.lead || item.heading,
-          :link => link, # || m.channel.link,
+          :link => feed[:link], # || m.channel.link,
           :description => feed[:description] || item.description || item.body || item.contents,
           :date => feed[:date] || Time.parse(item.created_at.to_s)
           
