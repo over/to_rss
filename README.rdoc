@@ -9,6 +9,10 @@ Easiest way to generate RSS:
   @posts = Post.all
   render :rss => @posts.to_rss {|feed, item| feed[:link] = polymorphic_url(item) }
 
+And add link to RSS in your <head></head>
+
+  <%= rss_link_tag "RSS", posts_url(:format => :xml) %>
+
 Plugin searches title of feed item in these fields:
 
   title, name, lead, heading
