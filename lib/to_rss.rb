@@ -62,8 +62,8 @@ module ToRss
           :title => feed[:title] || item.title || item.name || item.lead || item.heading,
           :link => feed[:link], # || m.channel.link,
           :description => feed[:description] || item.description || item.body || item.contents,
-          :date => feed[:date] || Time.parse(item.created_at.to_s)
-          
+          :date => feed[:date] || Time.parse(item.created_at.to_s),
+          :author => feed[:author] || nil
         }
         
         i = m.items.new_item
@@ -72,6 +72,7 @@ module ToRss
         i.description  = item_options[:description]
         i.date         = item_options[:date]
         i.guid.content = item_options[:link] + "#" + Digest::MD5.hexdigest("#{item_options[:title]}#{item_options[:description]}")
+        i.author       = item_options[:author]
       end
     end
     return content.to_s

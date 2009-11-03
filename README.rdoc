@@ -27,6 +27,7 @@ Also you can define own values of these RSS attributes. Check out examples of us
     feed[:title] = "#{item.title}: #{item.description.first(10)}..."
     feed[:description] = render_to_string(:partial => "posts/to_rss", :object => item)
     feed[:link] = polymorphic_url(item)
+    feed[:author] = "#{item.user.name}"
   end
 
 The only required attribute is feed[:link]
